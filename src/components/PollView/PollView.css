@@ -1,0 +1,10 @@
+#myChart {
+    margin-bottom: 30px;
+    margin-top: 40px;
+    width: 100%;
+    height: 500px;
+}
+
+#make-vote {
+    float: right;
+}

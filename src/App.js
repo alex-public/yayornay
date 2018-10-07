@@ -26,7 +26,7 @@ class App extends Component {
           </AppBar>
           <Route exact path="/" component={HomeView}/>
           <Route path="/startpoll" component={CreatePollView}/>
-          <Route path="/poll" component={PollView}/>
+          <Route path="/poll/:pollId" component={PollView}/>
         </div>
       </Router>
     );
