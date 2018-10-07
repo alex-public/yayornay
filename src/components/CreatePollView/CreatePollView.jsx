@@ -3,7 +3,7 @@ import ChipInput from 'material-ui-chip-input'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Typography from '@material-ui/core/Typography';
+import { Redirect } from 'react-router-dom'
 import './CreatePollView.css';
 
 class CreatePollView extends Component {
@@ -15,14 +15,15 @@ class CreatePollView extends Component {
         options: [],
         pubkeys: [],
         organizerWallet: '',
-        totalRewardFunds: null,
-        reward: null,
+        totalRewardFunds: 0,
+        reward: 0,
+        redirect: false,
       };
     }
 
     handleInputChange(event) {
       const target = event.target;
-      const value = target.value;
+      let value = target.value;
       const name = target.name;
   
       this.setState({
@@ -32,15 +33,26 @@ class CreatePollView extends Component {
 
     onSubmit() {
       const swal = window.swal;
-      swal("Good job!", "You started a poll", "success");
+      swal({
+        title: "You started a poll!",
+        text: "let's see how it's doing...",
+        icon: "success",
+        button: "Aww yiss!",
+      }).then(() => {
+        this.setState({redirect: true});
+      });
+    }
+
+    renderRedirect = () => {
+      if (this.state.redirect) {
+        return <Redirect to='/' />
+      }
     }
 
     render() {
       return (
-        <div className="create-poll-view">
-          <Typography variant="display1" gutterBottom>
-            Start a Poll
-          </Typography>
+        <div className="centered-form">
+          <h1>Start a Poll</h1>
           <TextField
             id="question"
             className="input"
@@ -50,21 +62,31 @@ class CreatePollView extends Component {
             margin="normal"
             onChange={this.handleInputChange.bind(this)}
             variant="filled"
+            fullWidthInput={true}
           />
           <ChipInput
             style={{marginTop: 10}}
             className="input"
             label="poll options"
-            defaultValue={this.state.options}
-            onChange={options => this.setState({ options })}
+            value={this.state.options}
+            onAdd={item => this.setState({ options: this.state.options.concat(item.split(/[ ]{1,}/))})}
+            onDelete={(_, targetIdx) => {
+              const options = this.state.options.filter((_, index) => index != targetIdx)
+              this.setState({ options })
+            }}
+            fullWidthInput={true}
           />
           <br/>
           <ChipInput
             style={{marginTop: 10}}
             className="input"
             label="voter public keys"
-            defaultValue={this.state.pubkeys}
-            onChange={pubkeys => this.setState({ pubkeys })}
+            value={this.state.pubkeys}
+            onAdd={item => this.setState({ pubkeys: this.state.pubkeys.concat(item.split(/[ ]{1,}/))})}
+            onDelete={(_, targetIdx) => {
+              const pubkeys = this.state.pubkeys.filter((_, index) => index != targetIdx)
+              this.setState({ pubkeys })
+            }}
           />
           <br/>
           <TextField
@@ -108,6 +130,7 @@ class CreatePollView extends Component {
           >
             start poll
           </Button>
+          {this.renderRedirect()}
         </div>
       );
     }
