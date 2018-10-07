@@ -14,7 +14,7 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <div>
+        <div className="parent">
           <Route exact path="/" component={HomeView}/>
           <Route path="/startpoll" component={CreatePollView}/>
           <Route path="/poll" component={PollView}/>

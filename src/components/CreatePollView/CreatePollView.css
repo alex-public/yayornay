@@ -1,0 +1,14 @@
+.create-poll-view {
+    margin-top: 40px;
+    display: inline-block;
+    text-align: left;
+    width: 60vw;
+}
+
+.input {
+    width: 100%;
+}
+
+.button {
+    float: right;
+}
