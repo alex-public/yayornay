@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
-import Paper from '@material-ui/core/Paper';
+import VoteModal from '../VoteModal/VoteModal';
 import Slide from '@material-ui/core/Slide';
 import './PollView.css';
 
@@ -33,21 +33,33 @@ class PollView extends Component {
     });
   }
 
+  openVoteModal() {
+    this.setState({voteOpen: true})
+  }
+
+  closeVoteModal() {
+    this.setState({voteOpen: false})
+  }
+  
   render() {
     return (
       <div className="centered-form">
           <h1>Poll: {this.state.pollId}</h1>
           <canvas id="myChart"></canvas>
-          <Button id="make-vote" variant="extendedFab" color="primary">
+          <Button
+            id="make-vote"
+            variant="extendedFab"
+            color="primary"
+            onClick={() => this.openVoteModal()}
+          >
             <AddIcon />
             submit your vote
           </Button>
           <Slide direction="up" in={this.state.voteOpen} mountOnEnter unmountOnExit>
-            <Paper elevation={4}>
-              <svg>
-                <polygon points="0,100 50,00, 100,100" />
-              </svg>
-            </Paper>
+            <VoteModal
+              options={ this.state.options }
+              close={ () => this.closeVoteModal() }
+            />
           </Slide>
       </div>
     );
