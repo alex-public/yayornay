@@ -43,6 +43,7 @@ class PollView extends Component {
   }
   
   componentDidMount() {
+    this.getData()
     this.updateChart()
   }
 
