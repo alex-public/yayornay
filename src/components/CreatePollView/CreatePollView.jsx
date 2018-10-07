@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ChipInput from 'material-ui-chip-input'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import { client } from 'ontology-dapi';
 import { Redirect } from 'react-router-dom'
 import './CreatePollView.css';
 
@@ -13,7 +13,7 @@ class CreatePollView extends Component {
     this.state = {
       question: '',
       options: [],
-      pubkeys: [],
+      pubkeys: ['AFmseVrdL9f9oyCzZefL9tG6UbvhUMqNMV', 'ANgV86zPQJ7AJPZHPbhuhS3qxzJKwiVqdo', 'AV2rBJ1CSa6eDz8aCU2j5Lg3xAXufpBys2', 'AFmseVrdL9f9oyCzZefL9tG6UbvhUMqNMV'],
       organizerWallet: '',
       totalRewardFunds: 0,
       reward: 0,
@@ -33,14 +33,41 @@ class CreatePollView extends Component {
 
   onSubmit() {
     const swal = window.swal;
-    swal({
-      title: "You started a poll!",
-      text: "let's see how it's doing...",
-      icon: "success",
-      button: "Aww yiss!",
-    }).then(() => {
-      this.setState({redirect: true});
-    });
+    const code = CONTRACT_CODE;
+    const name = 'poll contract';
+    const version = '1.0';
+    const author = 'eric wang';
+    const email = 'ewang1997@gmail.com';
+    const description = 'nothing';
+    const needStorage = true;
+    const gasPrice = 500;
+    const gasLimit = 100000000;
+
+    try {
+      client.api.smartContract.deploy({
+        code,
+        name,
+        version,
+        author,
+        email,
+        description,
+        needStorage,
+        gasPrice,
+        gasLimit
+      }).then(() => {
+        swal({
+          title: "You started a poll!",
+          text: "your contract hash is 154d30937ceb7ce32413cc5c89ee7b4f309dbac0",
+          icon: "success",
+          button: "Aww yiss!",
+        }).then(() => {
+          this.setState({redirect: true});
+        });
+      })
+    } catch (e) {
+      alert('onScDeploy canceled');
+      console.log('onScDeploy error:', e);
+    }
   }
 
   renderRedirect = () => {
@@ -74,7 +101,6 @@ class CreatePollView extends Component {
             const options = this.state.options.filter((_, index) => index !== targetIdx)
             this.setState({ options })
           }}
-          fullWidthInput={true}
         />
         <br/>
         <ChipInput
@@ -86,39 +112,6 @@ class CreatePollView extends Component {
           onDelete={(_, targetIdx) => {
             const pubkeys = this.state.pubkeys.filter((_, index) => index !== targetIdx)
             this.setState({ pubkeys })
-          }}
-        />
-        <br/>
-        <TextField
-          className="input"
-          name="organizerWallet"
-          label="your wallet address"
-          value={this.state.organizerWallet}
-          margin="normal"
-          onChange={this.handleInputChange.bind(this)}
-        />
-        <br/>
-        <TextField
-          className="input"
-          name="totalRewardFunds"
-          label="total funds"
-          value={this.state.totalRewardFunds}
-          margin="normal"
-          onChange={this.handleInputChange.bind(this)}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">ONT</InputAdornment>,
-          }}
-        />
-        <br/>
-        <TextField
-          className="input"
-          name="reward"
-          label="voter reward"
-          value={this.state.reward}
-          margin="normal"
-          onChange={this.handleInputChange.bind(this)}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">ONT</InputAdornment>,
           }}
         />
         <Button
@@ -135,5 +128,7 @@ class CreatePollView extends Component {
     );
   }
 }
+
+const CONTRACT_CODE = '54c56b6c766b00527ac46c766b51527ac4616c766b00c36c766b52527ac46c766b52c3055175657279876318006c766b52c308526567697374657287631b006235006c766b51c300c361653e006c766b53527ac4622b006c766b51c300c36c766b51c351c3617c6576006c766b53527ac4620e00006c766b53527ac46203006c766b53c3616c756652c56b6c766b00527ac46161681953797374656d2e53746f726167652e476574436f6e746578746c766b00c3617c681253797374656d2e53746f726167652e4765746c766b51527ac46203006c766b51c3616c756654c56b6c766b00527ac46c766b51527ac46161681953797374656d2e53746f726167652e476574436f6e746578746c766b00c3617c681253797374656d2e53746f726167652e4765746c766b52527ac461681953797374656d2e53746f726167652e476574436f6e746578746c766b00c36c766b51c3615272681253797374656d2e53746f726167652e50757461516c766b53527ac46203006c766b53c3616c7566';
 
 export default CreatePollView;
